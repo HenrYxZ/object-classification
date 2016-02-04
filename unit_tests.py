@@ -9,10 +9,12 @@ from matplotlib import pyplot as plt
 import descriptors
 import utils
 from dataset import Dataset
+import vlad
+import constants
 
 def test_dataset():
-    dataset = Dataset("dataset")
-    pickle.dump(dataset, open("dataset.obj", "wb"), protocol=2)
+    dataset = Dataset(constants.DATASET_PATH)
+    pickle.dump(dataset, open(constants.DATASET_OBJ_FILENAME, "wb"), protocol=constants.PICKLE_PROTOCOL)
     classes = dataset.get_classes()
     print("Dataset generated with {0} classes.".format(len(classes)))
     print(classes)
@@ -26,28 +28,24 @@ def test_dataset():
         )
 
 def test_des_type():
-    img = cv2.imread("dataset/cassava/n12926689_5139.JPEG")
+    img = cv2.imread(constants.TESTING_IMG_PATH)
     kp, des = descriptors.orb(img)
     return des
 
 def test_descriptors():
 
-    img = cv2.imread("dataset/cassava/n12926689_5139.JPEG")
+    img = cv2.imread(constants.TESTING_IMG_PATH)
     cv2.imshow("Normal Image", img)
-    print(
-        "Normal Image\n"\
-        "Press [1] to use ORB features or other key to use SIFT features"
-    )
-    option = cv2.waitKey()
+    print("Normal Image")
+    option = input("Enter [1] for using ORB features and other number to use SIFT.\n")
     start = time.time()
-    key_one = ord('1')
-    if option == key_one:
+    if option == 1:
         kp, des = descriptors.orb(img)
     else:
         kp, des = descriptors.sift(img)
     end = time.time()
     elapsed_time = utils.humanize_time(end - start)
-    des_name = "ORB" if option == 49 else "SIFT"
+    des_name = constants.ORB_FEAT_NAME if option == ord(constants.ORB_FEAT_OPTION_KEY) else constants.SIFT_FEAT_NAME
     print("Elapsed time getting descriptors {0}".format(elapsed_time))
     print("Number of descriptors found {0}".format(len(des)))
     if des is not None and len(des) > 0:
@@ -60,10 +58,8 @@ def test_descriptors():
     cv2.waitKey()
 
 def test_codebook():
-    dataset = pickle.load(open("dataset.obj", "rb"))
-    #print("Press [1] to use ORB features or any other key to use SIFT features")
-    #option = cv2.waitKey()
-    option = ord('1')
+    dataset = pickle.load(open(constants.DATASET_OBJ_FILENAME, "rb"))
+    option = input("Enter [1] for using ORB features or [2] to use SIFT features.\n")
     start = time.time()
     des = descriptors.all_descriptors(dataset, dataset.get_train_set(), option)
     end = time.time()
@@ -75,9 +71,21 @@ def test_codebook():
     end = time.time()
     elapsed_time = utils.humanize_time(end - start)
     print("Elapsed time calculating the k means for the codebook is {0}".format(elapsed_time))
-    np.savetxt("codebook64.csv", codebook, delimiter = ",")
-    print("Codebook loaded in codebook64.csv, press any key to exit ...")
+    np.savetxt(constants.CODEBOOK_FILE_NAME, codebook, delimiter=constants.NUMPY_DELIMITER)
+    print("Codebook loaded in {0}, press any key to exit ...".format(constants.CODEBOOK_FILE_NAME))
     cv2.waitKey()
 
+def test_vlad():
+    img = cv2.imread(constants.TESTING_IMG_PATH)
+    option = input("Enter [1] for using ORB features or [2] to use SIFT features.\n")
+    if option == 1:
+        des = descriptors.orb(img)
+    else:
+        des = descriptors.sift(img)
+    centers = np.loadtxt(constants.CODEBOOK_FILE_NAME, delimiter=constants.NUMPY_DELIMITER)
+    vlad_vector = vlad.vlad(des, centers)
+    print(vlad_vector)
+    return vlad_vector
+
 if __name__ == '__main__':
-    test_codebook()
+    test_vlad()

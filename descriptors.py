@@ -3,6 +3,7 @@ import numpy as np
 
 # Local dependencies
 import utils
+import constants
 
 def orb(img):
     """
@@ -35,7 +36,7 @@ def sift(img):
     kp, des = sift.detectAndCompute(img, None)
     return des
 
-def descriptors_from_class(dataset, class_img_paths, class_number, option = 49):
+def descriptors_from_class(dataset, class_img_paths, class_number, option = constants.ORB_FEAT_OPTION):
     """
     Gets all the descriptors for a class. If an image has a side with more than 640 pixels it will be resized leaving
     the biggest side at 640 pixels and conserving the aspect ratio for the other side.
@@ -58,8 +59,7 @@ def descriptors_from_class(dataset, class_img_paths, class_number, option = 49):
         h, w, channels = img.shape
         if h > resize_to or w > resize_to:
             img = utils.resize(img, resize_to, h, w)
-        key_one = ord('1')
-        if option == key_one:
+        if option == constants.ORB_FEAT_OPTION:
             des_name = "ORB"
             new_des = orb(img)
         else:
@@ -83,7 +83,7 @@ def descriptors_from_class(dataset, class_img_paths, class_number, option = 49):
     dataset.set_class_count(class_number, len(des))
     return des
 
-def all_descriptors(dataset, class_list, option = 49):
+def all_descriptors(dataset, class_list, option = constants.ORB_FEAT_OPTION):
     """
     Gets every descriptor of a set with different classes (This is useful for getting a codebook).
 
