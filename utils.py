@@ -71,13 +71,17 @@ def find_nn(point, neighborhood):
 
     Returns:
         float array: The point that is the nearest neighbor of the initial point.
-        float: Distance between the point and the nearest neighbor.
+        integer: Index of the nearest neighbor inside the neighborhood list
     """
     min_dist = float('inf')
     nn = neighborhood[0]
-    for neighbor in neighborhood:
+    nn_idx = 0
+    for i in range(len(neighborhood)):
+        neighbor = neighborhood[i]
         dist = cv2.norm(point - neighbor)
         if dist < min_dist:
             min_dist = dist
             nn = neighbor
-    return nn
+            nn_idx = i
+
+    return nn, nn_idx

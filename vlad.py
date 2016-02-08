@@ -1,4 +1,5 @@
 import numpy as np
+import cv2
 
 # Local dependencies
 import utils
@@ -16,9 +17,15 @@ def vlad(descriptors, centers):
         numpy float array: The VLAD vector.
     """
     dimensions = len(descriptors[0])
-    vlad_vector = np.zeros(dimensions, dtype=np.float32)
+    vlad_vector = np.zeros((len(centers), dimensions), dtype=np.float32)
     for descriptor in descriptors:
-        nearest_center = utils.find_nn(descriptor, centers)
+        nearest_center, center_idx = utils.find_nn(descriptor, centers)
         for i in range(dimensions):
-            vlad_vector[i] += (descriptor[i] - nearest_center[i])
+            vlad_vector[center_idx][i] += (descriptor[i] - nearest_center[i])
+    # Square Rooting
+    for dimension in range(dimensions):
+        vlad_vector[dimension] = np.sqrt(np.abs(vlad_vector[dimension]))
+    # L2 Normalization
+    vlad_vector = cv2.normalize(vlad_vector)
+    vlad_vector = vlad_vector.flatten()
     return vlad_vector
