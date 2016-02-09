@@ -1,6 +1,6 @@
 # object-classification
 Python and OpenCV code for object classification using images.
-The program calculates SIFT local descriptors on images and then gets a codebook for the training set using K-Means.
+The program calculates local descriptors on images (it can be ORB or SIFT) and then gets a codebook for the training set using K-Means.
 After that it uses the codebook to calculate VLAD (Vector of Locally Aggregated Descriptors) as a global descriptor for each
 of the images. This vectors are used on a SVM (Support Vector Machine) in the training phase. In the testing phase for each
 testing image its VLAD has to be calculated and the class is determined using that vector in the SVM. The program gives the
