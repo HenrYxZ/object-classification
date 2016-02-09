@@ -11,6 +11,7 @@ import utils
 from dataset import Dataset
 import vlad
 import constants
+import filenames
 
 def test_dataset():
     dataset = Dataset(constants.DATASET_PATH)
@@ -33,7 +34,6 @@ def test_des_type():
     return des
 
 def test_descriptors():
-
     img = cv2.imread(constants.TESTING_IMG_PATH)
     cv2.imshow("Normal Image", img)
     print("Normal Image")
@@ -66,12 +66,14 @@ def test_codebook():
     elapsed_time = utils.humanize_time(end - start)
     print("Elapsed time getting all the descriptors is {0}".format(elapsed_time))
     k = 64
+    des_name = constants.ORB_FEAT_NAME if option == constants.ORB_FEAT_OPTION else constants.SIFT_FEAT_NAME
+    codebook_filename = "codebook_{0}_{1}.csv".format(k, des_name)
     start = time.time()
     codebook = descriptors.gen_codebook(dataset, des, k)
     end = time.time()
     elapsed_time = utils.humanize_time(end - start)
     print("Elapsed time calculating the k means for the codebook is {0}".format(elapsed_time))
-    np.savetxt(constants.CODEBOOK_FILE_NAME, codebook, delimiter=constants.NUMPY_DELIMITER)
+    np.savetxt(codebook_filename, codebook, delimiter=constants.NUMPY_DELIMITER)
     print("Codebook loaded in {0}, press any key to exit ...".format(constants.CODEBOOK_FILE_NAME))
     cv2.waitKey()
 
@@ -82,10 +84,27 @@ def test_vlad():
         des = descriptors.orb(img)
     else:
         des = descriptors.sift(img)
-    centers = np.loadtxt(constants.CODEBOOK_FILE_NAME, delimiter=constants.NUMPY_DELIMITER)
+    des_name = constants.ORB_FEAT_NAME if option == constants.ORB_FEAT_OPTION else constants.SIFT_FEAT_NAME
+    k = 128
+    codebook_filename = "codebook_{0}_{1}.csv".format(k, des_name)
+    centers = np.loadtxt(codebook_filename, delimiter=constants.NUMPY_DELIMITER)
     vlad_vector = vlad.vlad(des, centers)
     print(vlad_vector)
     return vlad_vector
 
+def test_one_img_classification():
+    img = cv2.imread("test.jpg")
+    des = descriptors.orb(img)
+    k = 128
+    des_name = "ORB"
+    codebook_filename = filenames.codebook(k, des_name)
+    codebook = np.loadtxt(codebook_filename, delimiter=constants.NUMPY_DELIMITER)
+    img_vlad = vlad.vlad(des, codebook)
+    svm_filename = filenames.svm(k, des_name)
+    svm = cv2.SVM()
+    svm.load(svm_filename)
+    result = svm.predict(img_vlad)
+    print("result is {0}".format(result))
+
 if __name__ == '__main__':
-    test_vlad()
+    test_one_img_classification()

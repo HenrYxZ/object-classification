@@ -9,9 +9,11 @@ import vlad
 import descriptors
 import constants
 import utils
+import filenames
 
 def main():
-    dataset_option = input("Enter [1] to generate a new dataset or [2] to load one.\n")
+    # dataset_option = input("Enter [1] to generate a new dataset or [2] to load one.\n")
+    dataset_option = 2
     if dataset_option == constants.GENERATE_OPTION:
         print("Generating a new dataset.")
         dataset = Dataset(constants.DATASET_PATH)
@@ -23,8 +25,8 @@ def main():
         dataset = pickle.load(open(constants.DATASET_OBJ_FILENAME, "rb"))
     des_option = input("Enter [1] for using ORB features or [2] to use SIFT features.\n")
     des_name = constants.ORB_FEAT_NAME if des_option == constants.ORB_FEAT_OPTION else constants.SIFT_FEAT_NAME
-    k = 128
-    codebook_filename = "codebook_{0}_{1}.csv".format(k, des_name)
+    k = input("Enter the number of cluster centers you want for the codebook.\n")
+    codebook_filename = filenames.codebook(k, des_name)
     codebook_option = input("Enter [1] for generating a new codebook or [2] to load one.\n")
     if codebook_option == constants.GENERATE_OPTION:
         # Calculate all the training descriptors to generate the codebook
@@ -43,11 +45,13 @@ def main():
         np.savetxt(codebook_filename, codebook, delimiter=constants.NUMPY_DELIMITER)
         print("Codebook saved in {0}".format(codebook_filename))
     else:
+        print("Loading codebook ...")
         codebook = np.loadtxt(codebook_filename, delimiter=constants.NUMPY_DELIMITER)
+        print("Codebook with shape = {0} loaded.".format(codebook.shape))
     svm = train(dataset.get_train_set(), codebook, des_option=des_option)
     result, labels = test(dataset.get_test_set(), codebook, svm, des_option=des_option)
-    result_filename = "result_{0}_{1}.csv"
-    labels_filename = "labels_{0}_{1}.csv"
+    result_filename = filenames.result(k, des_name)
+    labels_filename = filenames.labels(k, des_name)
     np.savetxt(result_filename, result, delimiter=constants.NUMPY_DELIMITER)
     np.savetxt(labels_filename, labels, delimiter=constants.NUMPY_DELIMITER)
     #TODO Show a confusion matrix
@@ -65,8 +69,8 @@ def train(train_set, codebook, des_option = constants.ORB_FEAT_OPTION):
     """
     des_name = constants.ORB_FEAT_NAME if des_option == constants.ORB_FEAT_OPTION else constants.SIFT_FEAT_NAME
     k = len(codebook)
-    X_filename = "X_train_{0}_{1}.csv".format(k, des_name)
-    y_filename = "y_train_{0}_{1}.csv".format(k, des_name)
+    X_filename = filenames.X_train(k, des_name)
+    y_filename = filenames.y_train(k, des_name)
     data_option = input("Enter [1] to calculate VLAD vectors for the training set or [2] to load them.\n")
     if data_option == constants.GENERATE_OPTION:
         # Getting the global vectors for all of the training set
@@ -96,8 +100,8 @@ def train(train_set, codebook, des_option = constants.ORB_FEAT_OPTION):
     elapsed_time = utils.humanize_time(end - start)
     print("Elapsed time calculating the SVM for the training set is {0}".format(elapsed_time))
     # Storing the SVM in a file
-    k = len(codebook[0])
-    svm_filename = "svm_data_{0}_{1}.dat".format(k, des_name)
+    k = len(codebook)
+    svm_filename = filenames.svm(k, des_name)
     svm.save(svm_filename)
     return svm
 
@@ -116,8 +120,8 @@ def test(test_set, codebook, svm, des_option = constants.ORB_FEAT_OPTION):
     """
     des_name = constants.ORB_FEAT_NAME if des_option == constants.ORB_FEAT_OPTION else constants.SIFT_FEAT_NAME
     k = len(codebook)
-    X_filename = "X_test_{0}_{1}.csv".format(k, des_name)
-    y_filename = "y_test_{0}_{1}.csv".format(k, des_name)
+    X_filename = filenames.X_test(k, des_name)
+    y_filename = filenames.y_test(k, des_name)
     data_option = input("Enter [1] to calculate VLAD vectors for the testing set or [2] to load them.\n")
     if data_option == constants.GENERATE_OPTION:
         # Getting the global vectors for all of the testing set
