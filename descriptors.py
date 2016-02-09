@@ -38,8 +38,8 @@ def sift(img):
 
 def descriptors_from_class(dataset, class_img_paths, class_number, option = constants.ORB_FEAT_OPTION):
     """
-    Gets all the descriptors for a class. If an image has a side with more than 640 pixels it will be resized leaving
-    the biggest side at 640 pixels and conserving the aspect ratio for the other side.
+    Gets all the local descriptors for a class. If an image has a side with more than 640 pixels it will be resized 
+    leaving the biggest side at 640 pixels and conserving the aspect ratio for the other side.
 
     Args:
         dataset (Dataset object): An object that stores information about the dataset.
@@ -85,7 +85,7 @@ def descriptors_from_class(dataset, class_img_paths, class_number, option = cons
 
 def all_descriptors(dataset, class_list, option = constants.ORB_FEAT_OPTION):
     """
-    Gets every descriptor of a set with different classes (This is useful for getting a codebook).
+    Gets every local descriptor of a set with different classes (This is useful for getting a codebook).
 
     Args:
         class_list (list of arrays of strings): The list has information for a specific class in each element and each
@@ -133,15 +133,25 @@ def gen_codebook(dataset, descriptors, k = 64):
     dataset.set_des_labels(labels)
     return centers
 
-
-
-def gen_des_file(class_img_paths):
+def vlad(descriptors, centers):
     """
-    Generates a descriptor file for a class containing all the descriptors
+    Calculate the Vector of Locally Aggregated Descriptors (VLAD) which is a global descriptor from a group of
+    descriptors and centers that are codewords of a codebook, obtained for example with K-Means.
 
     Args:
-        class_img_paths (array of strings): The paths for each image in certain class
+        descriptors (numpy float matrix): The local descriptors.
+        centers (numpy float matrix): The centers are points representatives of the classes.
 
     Returns:
-
+        numpy float array: The VLAD vector.
     """
+    dimensions = len(descriptors[0])
+    vlad_vector = np.zeros((len(centers), dimensions), dtype=np.float32)
+    for descriptor in descriptors:
+        nearest_center, center_idx = utils.find_nn(descriptor, centers)
+        for i in range(dimensions):
+            vlad_vector[center_idx][i] += (descriptor[i] - nearest_center[i])
+    # L2 Normalization
+    vlad_vector = cv2.normalize(vlad_vector)
+    vlad_vector = vlad_vector.flatten()
+    return vlad_vector

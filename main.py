@@ -6,7 +6,6 @@ import os
 
 # Local dependencies
 from dataset import Dataset
-import vlad
 import descriptors
 import constants
 import utils
@@ -188,7 +187,7 @@ def get_data_and_labels(img_set, codebook, des_option = constants.ORB_FEAT_OPTIO
                 des = descriptors.sift(img)
             if des is not None:
                 des = np.array(des, dtype=np.float32)
-                vlad_vector = vlad.vlad(des, codebook)
+                vlad_vector = descriptors.vlad(des, codebook)
                 if X is None:
                     X = vlad_vector
                     y.append(class_number)

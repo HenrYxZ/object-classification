@@ -9,7 +9,6 @@ from matplotlib import pyplot as plt
 import descriptors
 import utils
 from dataset import Dataset
-import vlad
 import constants
 import filenames
 
@@ -88,7 +87,7 @@ def test_vlad():
     k = 128
     codebook_filename = "codebook_{0}_{1}.csv".format(k, des_name)
     centers = np.loadtxt(codebook_filename, delimiter=constants.NUMPY_DELIMITER)
-    vlad_vector = vlad.vlad(des, centers)
+    vlad_vector = descriptors.vlad(des, centers)
     print(vlad_vector)
     return vlad_vector
 
@@ -102,7 +101,7 @@ def test_one_img_classification():
     des_name = "SIFT"
     codebook_filename = filenames.codebook(k, des_name)
     codebook = utils.load(codebook_filename)
-    img_vlad = vlad.vlad(des, codebook)
+    img_vlad = descriptors.vlad(des, codebook)
     svm_filename = filenames.svm(k, des_name)
     svm = cv2.SVM()
     svm.load(svm_filename)
