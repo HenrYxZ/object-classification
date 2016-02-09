@@ -1,6 +1,7 @@
 import numpy.random as nprnd
 import numpy as np
 import cv2
+import scipy.io as sio
 
 def random_split(l, sample_size):
     """
@@ -39,7 +40,7 @@ def humanize_time(secs):
     """
     mins, secs = divmod(secs, 60)
     hours, mins = divmod(mins, 60)
-    return '%02d:%02d:%f' % (hours, mins, secs)
+    return '%02d:%02d:%02f' % (hours, mins, secs)
 
 def resize(img, new_size, h, w):
     """
@@ -85,3 +86,30 @@ def find_nn(point, neighborhood):
             nn_idx = i
 
     return nn, nn_idx
+
+def save(filename, arr):
+    """
+    Stores a numpy array in a file.
+
+    Args:
+        filename (string): The name for the file.
+        arr (numpy array):
+
+    Returns:
+        void
+    """
+    data = {"stored": arr}
+    sio.savemat(filename, data)
+
+def load(filename):
+    """
+    Load a numpy array from a file.
+
+    Args:
+        filename (string): The name of the file.
+
+    Returns:
+        numpy array: The array stored in the file.
+    """
+    data = sio.loadmat(filename)
+    return data["stored"]

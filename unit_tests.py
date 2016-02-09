@@ -94,11 +94,14 @@ def test_vlad():
 
 def test_one_img_classification():
     img = cv2.imread("test.jpg")
-    des = descriptors.orb(img)
+    resize_to = 640
+    h, w, channels = img.shape
+    img = utils.resize(img, resize_to, h, w)
+    des = descriptors.sift(img)
     k = 128
-    des_name = "ORB"
+    des_name = "SIFT"
     codebook_filename = filenames.codebook(k, des_name)
-    codebook = np.loadtxt(codebook_filename, delimiter=constants.NUMPY_DELIMITER)
+    codebook = utils.load(codebook_filename)
     img_vlad = vlad.vlad(des, codebook)
     svm_filename = filenames.svm(k, des_name)
     svm = cv2.SVM()

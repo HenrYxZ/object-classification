@@ -2,6 +2,7 @@ import pickle
 import cv2
 import numpy as np
 import time
+import os
 
 # Local dependencies
 from dataset import Dataset
@@ -12,6 +13,10 @@ import utils
 import filenames
 
 def main():
+    if not os.path.exists("files"):
+        os.makedirs("files")
+    if not os.path.exists("dataset"):
+        print("Dataset not found, please copy one.")
     # dataset_option = input("Enter [1] to generate a new dataset or [2] to load one.\n")
     dataset_option = 2
     if dataset_option == constants.GENERATE_OPTION:
@@ -42,18 +47,20 @@ def main():
         elapsed_time = utils.humanize_time(end - start)
         print("Elapsed time calculating the k means for the codebook is {0}".format(elapsed_time))
         # Stores the codebook in a file
-        np.savetxt(codebook_filename, codebook, delimiter=constants.NUMPY_DELIMITER)
+        utils.save(codebook_filename, codebook)
         print("Codebook saved in {0}".format(codebook_filename))
     else:
         print("Loading codebook ...")
-        codebook = np.loadtxt(codebook_filename, delimiter=constants.NUMPY_DELIMITER)
+        codebook = utils.load(codebook_filename)
         print("Codebook with shape = {0} loaded.".format(codebook.shape))
+    # Train and test the dataset
     svm = train(dataset.get_train_set(), codebook, des_option=des_option)
     result, labels = test(dataset.get_test_set(), codebook, svm, des_option=des_option)
+    # Store the results from the test
     result_filename = filenames.result(k, des_name)
     labels_filename = filenames.labels(k, des_name)
-    np.savetxt(result_filename, result, delimiter=constants.NUMPY_DELIMITER)
-    np.savetxt(labels_filename, labels, delimiter=constants.NUMPY_DELIMITER)
+    utils.save(result_filename, result)
+    utils.save(labels_filename, labels)
     #TODO Show a confusion matrix
 
 def train(train_set, codebook, des_option = constants.ORB_FEAT_OPTION):
@@ -77,16 +84,16 @@ def train(train_set, codebook, des_option = constants.ORB_FEAT_OPTION):
         print("Getting global descriptors for the training set.")
         start = time.time()
         X, y = get_data_and_labels(train_set, codebook, des_option)
-        np.savetxt(X_filename, X, delimiter=constants.NUMPY_DELIMITER)
-        np.savetxt(y_filename, y, delimiter=constants.NUMPY_DELIMITER)
+        utils.save(X_filename, X)
+        utils.save(y_filename, y)
         end = time.time()
         elapsed_time = utils.humanize_time(end - start)
         print("Elapsed time calculating VLAD vectors for training set is {0}.".format(elapsed_time))
     else:
         # Loading the global vectors for all of the training set
         print("Loading global descriptors for the training set.")
-        X = np.loadtxt(X_filename, delimiter=constants.NUMPY_DELIMITER)
-        y = np.loadtxt(y_filename, delimiter=constants.NUMPY_DELIMITER)
+        X = utils.load(X_filename)
+        y = utils.load(y_filename)
         X = np.matrix(X, dtype=np.float32)
         y = np.float32(y)[:, np.newaxis]
     # Calculating the Support Vector Machine for the training set
@@ -128,16 +135,16 @@ def test(test_set, codebook, svm, des_option = constants.ORB_FEAT_OPTION):
         print("Getting global descriptors for the testing set...")
         start = time.time()
         X, y = get_data_and_labels(test_set, codebook, des_option)
-        np.savetxt(X_filename, X, delimiter=constants.NUMPY_DELIMITER)
-        np.savetxt(y_filename, y, delimiter=constants.NUMPY_DELIMITER)
+        utils.save(X_filename, X)
+        utils.save(y_filename, y)
         end = time.time()
         elapsed_time = utils.humanize_time(end - start)
         print("Elapsed time calculating VLAD vectors for testing set is {0}".format(elapsed_time))
     else:
         # Loading the global vectors for all of the testing set
         print("Loading global descriptors for the testing set.")
-        X = np.loadtxt(X_filename.format(des_name), delimiter=constants.NUMPY_DELIMITER)
-        y = np.loadtxt(y_filename.format(des_name), delimiter=constants.NUMPY_DELIMITER)
+        X = utils.load(X_filename.format(des_name))
+        y = utils.load(y_filename.format(des_name))
         X = np.matrix(X, dtype=np.float32)
         y = np.float32(y)[:, np.newaxis]
     # Predicting the testing set using the SVM
