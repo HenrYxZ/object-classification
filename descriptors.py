@@ -38,7 +38,7 @@ def sift(img):
 
 def descriptors_from_class(dataset, class_img_paths, class_number, option = constants.ORB_FEAT_OPTION):
     """
-    Gets all the local descriptors for a class. If an image has a side with more than 640 pixels it will be resized 
+    Gets all the local descriptors for a class. If an image has a side with more than 640 pixels it will be resized
     leaving the biggest side at 640 pixels and conserving the aspect ratio for the other side.
 
     Args:

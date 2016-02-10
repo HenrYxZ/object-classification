@@ -12,8 +12,8 @@ import utils
 import filenames
 
 def main():
-    if not os.path.exists("files"):
-        os.makedirs("files")
+    if not os.path.exists(constants.FILES_DIR_NAME):
+        os.makedirs(constants.FILES_DIR_NAME)
     if not os.path.exists("dataset"):
         print("Dataset not found, please copy one.")
     # dataset_option = input("Enter [1] to generate a new dataset or [2] to load one.\n")
