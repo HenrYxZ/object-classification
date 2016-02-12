@@ -113,3 +113,20 @@ def load(filename):
     """
     data = sio.loadmat(filename)
     return data["stored"]
+
+def save_csv(filename, arr):
+    """
+    Save an array into a file with the filename.
+
+    Args:
+        filename (string): The name for the file.
+        arr (numpy array): The array that is going to be saved.
+
+    Returns:
+        void
+    """
+    file = open(filename, "w")
+    for row in arr:
+        for i in range(len(row) - 1):
+            file.write("{0} ".format(row[i]))
+        file.write("{0}\n".format(row[len(row) - 1]))

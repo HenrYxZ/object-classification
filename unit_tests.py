@@ -39,9 +39,11 @@ def test_descriptors():
     option = input("Enter [1] for using ORB features and other number to use SIFT.\n")
     start = time.time()
     if option == 1:
-        kp, des = descriptors.orb(img)
+        orb = cv2.ORB()
+        kp, des = orb.detectAndCompute(img, None)
     else:
-        kp, des = descriptors.sift(img)
+        sift = cv2.SIFT()
+        kp, des = sift.detectAndCompute(img, None)
     end = time.time()
     elapsed_time = utils.humanize_time(end - start)
     des_name = constants.ORB_FEAT_NAME if option == ord(constants.ORB_FEAT_OPTION_KEY) else constants.SIFT_FEAT_NAME
@@ -109,4 +111,4 @@ def test_one_img_classification():
     print("result is {0}".format(result))
 
 if __name__ == '__main__':
-    test_one_img_classification()
+    test_descriptors()
