@@ -8,7 +8,8 @@ import os
 import filenames
 import utils
 
-def codebook_to_csv(k = 128, des_name = constants.SIFT_FEAT_NAME):
+
+def codebook_to_csv(k=128, des_name=constants.ORB_FEAT_NAME):
     if not os.path.exists(constants.FILES_DIR_NAME):
         os.makedirs(constants.FILES_DIR_NAME)
     codebook = utils.load(filenames.codebook(k, des_name))

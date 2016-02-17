@@ -16,8 +16,7 @@ def main():
         os.makedirs(constants.FILES_DIR_NAME)
     if not os.path.exists("dataset"):
         print("Dataset not found, please copy one.")
-    # dataset_option = input("Enter [1] to generate a new dataset or [2] to load one.\n")
-    dataset_option = 2
+    dataset_option = input("Enter [1] to generate a new dataset or [2] to load one.\n")
     if dataset_option == constants.GENERATE_OPTION:
         print("Generating a new dataset.")
         dataset = Dataset(constants.DATASET_PATH)
