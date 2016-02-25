@@ -51,7 +51,7 @@ def descriptors_from_class(dataset, class_img_paths, class_number, option = cons
         numpy float matrix: Each row are the descriptors found in an image of the class
     """
     des = None
-    step = (5 * len(class_img_paths)) / 100
+    step = (constants.STEP_PERCENTAGE * len(class_img_paths)) / 100
     for i in range(len(class_img_paths)):
         img_path = class_img_paths[i]
         img = cv2.imread(img_path)
@@ -111,7 +111,7 @@ def all_descriptors(dataset, class_list, option = constants.ORB_FEAT_OPTION):
     print("Total number of descriptors: {0}".format(len(des)))
     if len(des) > 0:
         print("Dimension of descriptors: {0}".format(len(des[0])))
-        print("First descriptor: {0}".format(des[0]))
+        print("First descriptor:\n{0}".format(des[0]))
     return des
 
 def gen_codebook(dataset, descriptors, k = 64):
@@ -130,7 +130,6 @@ def gen_codebook(dataset, descriptors, k = 64):
     epsilon = 1.0
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, iterations, epsilon)
     compactness, labels, centers = cv2.kmeans(descriptors, k , criteria, iterations, cv2.KMEANS_RANDOM_CENTERS)
-    dataset.set_des_labels(labels)
     return centers
 
 def vlad(descriptors, centers):

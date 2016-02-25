@@ -23,3 +23,6 @@ def y_test(k, des_name):
 
 def svm(k, des_name):
     return "{0}/svm_data_{1}_{2}.dat".format(constants.FILES_DIR_NAME, k, des_name)
+
+def log(k, des_name):
+    return "{0}/log_{1}_{2}.txt".format(constants.FILES_DIR_NAME, k, des_name)

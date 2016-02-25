@@ -1,12 +1,12 @@
 import constants
-import scipy.io as sio
-import numpy as np
 import cv2
 import os
+import time
 
 # Local dependencies
 import filenames
 import utils
+import main
 
 
 def codebook_to_csv(k=128, des_name=constants.ORB_FEAT_NAME):
@@ -18,5 +18,8 @@ def codebook_to_csv(k=128, des_name=constants.ORB_FEAT_NAME):
     print("Copied codebook into the file with name {0}. Press any key to exit...".format(filename))
     cv2.waitKey()
 
+def run_all():
+    main.main(is_interactive=False, k_opt=64, des_opt=constants.ORB_FEAT_OPTION)
+
 if __name__ == '__main__':
-    codebook_to_csv()
+    run_all()

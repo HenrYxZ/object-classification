@@ -1,6 +1,9 @@
 import glob
 import utils
 
+# Local dependencies
+import constants
+
 class Dataset:
     '''
     This class manages the information for this particular dataset.
@@ -15,17 +18,17 @@ class Dataset:
     def generate_sets(self):
         dataset_classes = glob.glob(self.path + "/*")
         for folder in dataset_classes:
+            path = folder.replace("\\", "/")
             if "/" in folder:
                 class_name = folder.split("/")[-1]
             else:
                 class_name = folder.split("\\")[-1]
             self.classes.append(class_name)
-            self.classes_counts.append(0)
-            class_files = glob.glob(folder + "/*.JPEG")
-            test_size = len(class_files) / 3
-            train, test = utils.random_split(class_files, test_size)
+            train = glob.glob(path + "/train/*.JPEG")
+            test = glob.glob(path + "/test/*.JPEG")
             self.train_set.append(train)
             self.test_set.append(test)
+            self.classes_counts.append(0)
 
     def get_train_set(self):
         if len(self.train_set) == 0:
@@ -45,16 +48,13 @@ class Dataset:
     def get_classes_counts(self):
         return self.classes_counts
 
-    def get_labels(self):
-        return self.labels
-
     def store_listfile(self):
         '''
         Used for creating files in the format filelist used in Caffe for
         converting an image set. (caffe/tools/convert_imageset.cpp)
         '''
-        train_file = open("train_file.txt", "w")
-        test_file = open("test_file.txt", "w")
+        train_file = open(constants.TRAIN_TXT_FILE, "w")
+        test_file = open(constants.TEST_TXT_FILE, "w")
         self.get_train_set()
         self.get_test_set()
         for class_id in range(len(self.classes)):
@@ -74,9 +74,6 @@ class Dataset:
                 test_file.write("{0} {1}\n".format(path, class_id))
         train_file.close()
         test_file.close()
-
-    def set_des_labels(self, labels):
-        self.labels = labels
 
     def set_class_count(self, class_number, class_count):
         self.classes_counts[class_number] = class_count
