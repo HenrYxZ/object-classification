@@ -52,6 +52,7 @@ def main(is_interactive=True, k_opt=64, des_opt=constants.ORB_FEAT_OPTION):
         end = time.time()
         log.train_des_time(end - start)
         # Generates the codebook using K Means
+        print("Generating a codebook using K-Means with k={0}".format(k))
         start = time.time()
         codebook = descriptors.gen_codebook(dataset, des, k)
         end = time.time()
