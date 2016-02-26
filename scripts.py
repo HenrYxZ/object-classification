@@ -19,7 +19,7 @@ def codebook_to_csv(k=128, des_name=constants.ORB_FEAT_NAME):
     cv2.waitKey()
 
 def run_all():
-    main.main(is_interactive=False, k_opt=64, des_opt=constants.ORB_FEAT_OPTION)
+    main.main(is_interactive=False, k_opt=32, des_opt=constants.ORB_FEAT_OPTION, svm_kernel=cv2.SVM_RBF)
 
 if __name__ == '__main__':
     run_all()

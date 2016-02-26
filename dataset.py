@@ -1,5 +1,5 @@
 import glob
-import utils
+import numpy as np
 
 # Local dependencies
 import constants
@@ -13,6 +13,7 @@ class Dataset:
     def __init__(self, path):
         """
         Initialize the Dataset object.
+
         Args:
             path: The path on where the dataset of images is stored.
 
@@ -28,6 +29,7 @@ class Dataset:
     def generate_sets(self):
         """
         Reads the information of the training and testings sets and stores it into attributes of the object.
+
         Returns:
             void
         """
@@ -48,6 +50,7 @@ class Dataset:
     def get_train_set(self):
         """
         Get the paths of the objects in the training set.
+
         Returns:
             list of strings: Paths for objects in the training set.
         """
@@ -58,6 +61,7 @@ class Dataset:
     def get_test_set(self):
         """
         Get the paths of the objects in the testing set.
+
         Returns:
             list of strings: Paths for objects in the testing set.
         """
@@ -68,6 +72,7 @@ class Dataset:
     def get_classes(self):
         """
         Get the names of the classes that are in the dataset.
+
         Returns:
             list of strings: List with the names of the classes.
         """
@@ -78,15 +83,54 @@ class Dataset:
     def get_classes_counts(self):
         """
         Get a list with the count of total local descriptors for each class.
+
         Returns:
             list of integers: List with the count of all the local descriptors in each class.
         """
         return self.classes_counts
 
+    def get_y(self, my_set):
+        """
+        Get the labels for the a given set.
+
+        Args:
+            my_set (matrix of strings): Each row has the paths for the objects in that class.
+
+        Returns:
+            NumPy float array: The labels for a given set.
+        """
+        y = []
+        if len(my_set) == 0:
+            self.generate_sets()
+        for class_ID in range(len(my_set)):
+                y += [class_ID] * len(my_set[class_ID])
+        # Transform the list in to a vector
+        y = np.float32(y)[:, np.newaxis]
+        return y
+
+    def get_train_y(self):
+        """
+        Get the labels for the training set.
+
+        Returns:
+            NumPy float array: The labels for the training set.
+        """
+        return self.get_y(self.train_set)
+
+    def get_test_y(self):
+        """
+        Get the labels for the testing set.
+
+        Returns:
+            NumPy float array: The labels for the testing set.
+        """
+        return self.get_y(self.test_set)
+
     def store_listfile(self):
         """
         Used for creating files in the format filelist used in Caffe for
         converting an image set. (caffe/tools/convert_imageset.cpp)
+
         Returns:
             void
         """
@@ -115,6 +159,7 @@ class Dataset:
     def set_class_count(self, class_number, class_count):
         """
         Set the count of local descriptors in one class.
+
         Args:
             class_number: ID for the class.
             class_count:  Number of local descriptors that were found in the class.

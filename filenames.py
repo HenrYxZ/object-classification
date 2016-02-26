@@ -1,28 +1,46 @@
+import cv2
+
+# Local dependencies
 import constants
 
+
 def codebook(k, des_name):
-    return "{0}/codebook_{1}_{2}.mat".format(constants.FILES_DIR_NAME, k, des_name)
+    return "{0}/codebook_{1}.mat".format(constants.FILES_DIR_NAME, signature(k, des_name))
 
-def result(k, des_name):
-    return "{0}/result_{1}_{2}.mat".format(constants.FILES_DIR_NAME, k, des_name)
 
-def labels(k, des_name):
-    return "{0}/labels_{1}_{2}.mat".format(constants.FILES_DIR_NAME, k, des_name)
+def result(k, des_name, svm_kernel):
+    return "{0}/result_{1}.csv".format(constants.FILES_DIR_NAME, signature(k, des_name, kernel_name(svm_kernel)))
 
-def X_train(k, des_name):
-    return "{0}/X_train_{1}_{2}.mat".format(constants.FILES_DIR_NAME, k, des_name)
 
-def y_train(k, des_name):
-    return "{0}/y_train_{1}_{2}.mat".format(constants.FILES_DIR_NAME, k, des_name)
+def vlads_train(k, des_name):
+    return "{0}/VLADS_train_{1}.mat".format(constants.FILES_DIR_NAME, signature(k, des_name))
 
-def X_test(k, des_name):
-    return "{0}/X_test_{1}_{2}.mat".format(constants.FILES_DIR_NAME, k, des_name)
 
-def y_test(k, des_name):
-    return "{0}/y_test_{1}_{2}.mat".format(constants.FILES_DIR_NAME, k, des_name)
+def vlads_test(k, des_name):
+    return "{0}/VLADS_test_{1}.mat".format(constants.FILES_DIR_NAME, signature(k, des_name))
 
-def svm(k, des_name):
-    return "{0}/svm_data_{1}_{2}.dat".format(constants.FILES_DIR_NAME, k, des_name)
 
-def log(k, des_name):
-    return "{0}/log_{1}_{2}.txt".format(constants.FILES_DIR_NAME, k, des_name)
+def svm(k, des_name, svm_kernel):
+    return "{0}/svm_data_{1}.dat".format(constants.FILES_DIR_NAME, signature(k, des_name, kernel_name(svm_kernel)))
+
+
+def log(k, des_name, svm_kernel):
+    return "{0}/log_{1}.txt".format(constants.FILES_DIR_NAME, signature(k, des_name, kernel_name(svm_kernel)))
+
+
+def signature(k, des_name, svm_kernel=None):
+    if svm_kernel is None:
+        return "{0}_{1}".format(k, des_name)
+    else:
+        return "{0}_{1}_{2}".format(k, des_name, svm_kernel)
+
+def kernel_name(svm_kernel):
+    if svm_kernel == cv2.SVM_LINEAR:
+        kernel_name = "LINEAR"
+    elif svm_kernel == cv2.SVM_POLY:
+        kernel_name = "POLY"
+    elif svm_kernel == cv2.SVM_RBF:
+        kernel_name = "RBF"
+    else:
+        kernel_name = "SIGMOID"
+    return kernel_name

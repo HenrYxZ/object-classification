@@ -5,13 +5,14 @@ import filenames
 
 
 class Log:
-    def __init__(self, k, des_name):
+    def __init__(self, k, des_name, svm_kernel):
         self.text = ""
         self.k = k
         self.des_name = des_name
+        self.svm_kernel = svm_kernel
 
     def save(self):
-        file = open(filenames.log(self.k, self.des_name), "w")
+        file = open(filenames.log(self.k, self.des_name, self.svm_kernel), "w")
         file.write(self.text)
         file.close()
 
