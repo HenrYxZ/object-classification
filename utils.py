@@ -2,6 +2,8 @@ import numpy.random as nprnd
 import numpy as np
 import cv2
 import scipy.io as sio
+import matplotlib.pyplot as plt
+
 
 def random_split(l, sample_size):
     """
@@ -130,3 +132,18 @@ def save_csv(filename, arr):
         for i in range(len(row) - 1):
             file.write("{0} ".format(row[i]))
         file.write("{0}\n".format(row[len(row) - 1]))
+
+def show_conf_mat(confusion_matrix):
+    """
+    Show a windows with a color image for a confusion matrix
+
+    Args:
+        confusion_matrix (NumPy Array): The matrix to be shown.
+
+    Returns:
+        void
+    """
+    plt.matshow(confusion_matrix)
+    plt.title('Confusion Matrix')
+    plt.colorbar()
+    plt.show()

@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 import time
 import os
-import matplotlib.pyplot as plt
 
 # Local dependencies
 from dataset import Dataset
@@ -98,13 +97,10 @@ def main(is_interactive=True, k_opt=64, des_opt=constants.ORB_FEAT_OPTION):
         experiment_end = time.time()
         elapsed_time = utils.humanize_time(experiment_end - experiment_start)
         print("Total time during the experiment was {0}".format(elapsed_time))
-
-    # Show a plot of it
-    plt.matshow(confusion_matrix)
-    plt.title('Confusion matrix')
-    plt.colorbar()
-    plt.show()
-    raw_input("Press [Enter] to exit ...")
+    else:
+        # Show a plot of the confusion matrix on interactive mode
+        utils.show_conf_mat(confusion_matrix)
+        raw_input("Press [Enter] to exit ...")
 
 def train(train_set, codebook, log, des_option=constants.ORB_FEAT_OPTION, is_interactive=True):
     """
