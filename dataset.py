@@ -41,8 +41,8 @@ class Dataset:
             else:
                 class_name = folder.split("\\")[-1]
             self.classes.append(class_name)
-            train = glob.glob(path + "/train/*.JPEG")
-            test = glob.glob(path + "/test/*.JPEG")
+            train = glob.glob(path + "/train/*")
+            test = glob.glob(path + "/test/*")
             self.train_set.append(train)
             self.test_set.append(test)
             self.classes_counts.append(0)
