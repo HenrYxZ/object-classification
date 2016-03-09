@@ -149,7 +149,7 @@ class Classifier:
             img_paths = img_set[class_number]
             step = round(constants.STEP_PERCENTAGE * len(img_paths) / 100)
             for i in range(len(img_paths)):
-                if i % step == 0:
+                if (step > 0) and (i % step == 0):
                     percentage = (100 * i) / len(img_paths)
                     print("Calculating global descriptors for image number {0} of {1}({2}%)".format(
                         i, len(img_paths), percentage)
