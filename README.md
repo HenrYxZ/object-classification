@@ -6,6 +6,8 @@ of the images. This vectors are used on a SVM (Support Vector Machine) in the tr
 testing image its VLAD has to be calculated and the class is determined using that vector in the SVM. The program gives the
 accuracy of the predictions for the testing phase.
 
+I used this for a research project, you can see more of it here http://aggiecv.blogspot.com/
+
 ## Usage
 To run the main program run ``python main.py``
 
