@@ -12,7 +12,7 @@ I used this for a research project, you can see more of it here http://aggiecv.b
 To run the main program run ``python main.py``
 
 The images have to be in a folder inside this project with the name "dataset". The images must be separeted between classes
-in different folders. For example inside "database" can be the folders "lion", "elephant" and "monkey" each one with its
+in different folders. For example inside "dataset" can be the folders "lion", "elephant" and "monkey" each one with its
 corresponding images. The images don't have to be separeted between training and testing, the selection of that is done by
 the class Dataset. The class will randomly select some images for training and other for testing, leaving 1/3 of the images
 of each class for testing and the rest for training. After a Dataset object is generated and separeted the images it is stored
