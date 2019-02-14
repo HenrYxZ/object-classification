@@ -13,10 +13,12 @@ To run the main program run ``python main.py``
 
 The images have to be in a folder inside this project with the name "dataset". The images must be separeted between classes
 in different folders. For example inside "dataset" can be the folders "lion", "elephant" and "monkey" each one with its
-corresponding images. The images don't have to be separeted between training and testing, the selection of that is done by
-the class Dataset. The class will randomly select some images for training and other for testing, leaving 1/3 of the images
-of each class for testing and the rest for training. After a Dataset object is generated and separeted the images it is stored
-in a file using pickle. You should only generate one Dataset object and then reuse it to have consistent experiments.
+corresponding images.
+
+The images have to be separated between training and testing in different folders, "train" and "test" inside the folder for the
+class. For example, inside the folder "lion" there will be the folder "train" which contains the training set for the lion images
+and the folder "test" which contains the testing images of lions. After a Dataset object is generated and separated the images
+it is stored in a file using pickle. You should only generate one Dataset object and then reuse it to have consistent experiments.
 
 When the program already selected the images it will ask you to decide the kind of features to use. It supports ORB and SIFT
 features. Then it gets the descriptors of all the training images to create a codebook using K-Means. You can calculate the
